@@ -8,6 +8,7 @@ interface CanvasWorkbenchProps {
   activeBlockId: string | null;
   calibrationStep: CalibrationStep;
   showPreview: boolean;
+  bubbleDimensions: [number, number];
   onCanvasClick: (x: number, y: number) => void;
   onBlockUpdate: (block: FieldBlock) => void;
 }
@@ -18,6 +19,7 @@ export const CanvasWorkbench: React.FC<CanvasWorkbenchProps> = ({
   activeBlockId,
   calibrationStep,
   showPreview,
+  bubbleDimensions,
   onCanvasClick,
 }) => {
   const [scale, setScale] = useState(1);
@@ -138,7 +140,7 @@ export const CanvasWorkbench: React.FC<CanvasWorkbenchProps> = ({
                           key={`bubble-${labelIndex}-${bubbleIndex}`}
                           x={x}
                           y={y}
-                          radius={10}
+                          radius={bubbleDimensions[0] / 2}
                           stroke={block.id === activeBlockId ? "#3b82f6" : "#8e9299"}
                           strokeWidth={2}
                           fill={block.id === activeBlockId ? "rgba(59, 130, 246, 0.2)" : "transparent"}

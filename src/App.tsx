@@ -12,6 +12,7 @@ export default function App() {
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [calibrationStep, setCalibrationStep] = useState<CalibrationStep>("IDLE");
   const [showPreview, setShowPreview] = useState(true);
+  const [bubbleDimensions, setBubbleDimensions] = useState<[number, number]>([40, 40]);
   const [notification, setNotification] = useState<{ message: string; type: 'info' | 'success' | 'error' } | null>(null);
 
   const showNotification = (message: string, type: 'info' | 'success' | 'error' = 'info') => {
@@ -91,7 +92,7 @@ export default function App() {
   const handleExport = () => {
     const config: OMRConfig = {
       pageDimensions: image ? [image.width, image.height] : [1846, 1500],
-      bubbleDimensions: [40, 40],
+      bubbleDimensions: bubbleDimensions,
       preProcessors: [
         {
           name: "CropPage",
@@ -146,6 +147,7 @@ export default function App() {
             activeBlockId={activeBlockId}
             calibrationStep={calibrationStep}
             showPreview={showPreview}
+            bubbleDimensions={bubbleDimensions}
             onCanvasClick={handleCanvasClick}
             onBlockUpdate={(updated) => setBlocks(blocks.map(b => b.id === updated.id ? updated : b))}
           />
@@ -179,7 +181,9 @@ export default function App() {
         activeBlockId={activeBlockId}
         calibrationStep={calibrationStep}
         showPreview={showPreview}
+        bubbleDimensions={bubbleDimensions}
         onTogglePreview={() => setShowPreview(!showPreview)}
+        onBubbleDimensionsChange={setBubbleDimensions}
         onAddBlock={handleAddBlock}
         onSelectBlock={(id) => {
           setActiveBlockId(id);

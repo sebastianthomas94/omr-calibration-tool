@@ -8,7 +8,9 @@ interface SidebarProps {
   activeBlockId: string | null;
   calibrationStep: CalibrationStep;
   showPreview: boolean;
+  bubbleDimensions: [number, number];
   onTogglePreview: () => void;
+  onBubbleDimensionsChange: (dims: [number, number]) => void;
   onAddBlock: (type: FieldBlock['fieldType']) => void;
   onSelectBlock: (id: string) => void;
   onBlockUpdate: (block: FieldBlock) => void;
@@ -23,7 +25,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeBlockId,
   calibrationStep,
   showPreview,
+  bubbleDimensions,
   onTogglePreview,
+  onBubbleDimensionsChange,
   onAddBlock,
   onSelectBlock,
   onBlockUpdate,
@@ -71,6 +75,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className={cn("w-2 h-2 rounded-full", showPreview ? "bg-[var(--accent)]" : "bg-white/20")} />
             {showPreview ? "Overlay Enabled" : "Overlay Disabled"}
           </button>
+
+          <div className="mt-4 p-4 bg-[var(--bg)] rounded-xl border border-[var(--border)]">
+            <h2 className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] font-bold mb-3">Bubble Calibration</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[9px] uppercase tracking-wider text-[var(--text-secondary)] block mb-1">Width (px)</label>
+                <input 
+                  type="number" 
+                  value={bubbleDimensions[0]}
+                  onChange={(e) => onBubbleDimensionsChange([parseInt(e.target.value) || 0, bubbleDimensions[1]])}
+                  className="w-full bg-[var(--panel-bg)] border border-[var(--border)] rounded px-2 py-1 text-xs focus:border-[var(--accent)] outline-none"
+                />
+              </div>
+              <div>
+                <label className="text-[9px] uppercase tracking-wider text-[var(--text-secondary)] block mb-1">Height (px)</label>
+                <input 
+                  type="number" 
+                  value={bubbleDimensions[1]}
+                  onChange={(e) => onBubbleDimensionsChange([bubbleDimensions[0], parseInt(e.target.value) || 0])}
+                  className="w-full bg-[var(--panel-bg)] border border-[var(--border)] rounded px-2 py-1 text-xs focus:border-[var(--accent)] outline-none"
+                />
+              </div>
+            </div>
+            <p className="text-[9px] text-[var(--text-secondary)] mt-2 italic">Adjust these values to match the size of bubbles on your sheet.</p>
+          </div>
         </section>
 
         {/* Blocks */}
