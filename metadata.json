@@ -1,0 +1,5 @@
+{
+  "name": "OMR Calibration Tool",
+  "description": "Visual tool for configuring OMR templates with real-time canvas overlay and JSON export.",
+  "requestFramePermissions": []
+}
