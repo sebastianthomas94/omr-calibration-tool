@@ -9,8 +9,11 @@ interface SidebarProps {
   calibrationStep: CalibrationStep;
   showPreview: boolean;
   bubbleDimensions: [number, number];
+  pendingPoint: [number, number] | null;
   onTogglePreview: () => void;
   onBubbleDimensionsChange: (dims: [number, number]) => void;
+  onConfirmPoint: () => void;
+  onCancelPoint: () => void;
   onAddBlock: (type: FieldBlock['fieldType']) => void;
   onSelectBlock: (id: string) => void;
   onBlockUpdate: (block: FieldBlock) => void;
@@ -26,8 +29,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   calibrationStep,
   showPreview,
   bubbleDimensions,
+  pendingPoint,
   onTogglePreview,
   onBubbleDimensionsChange,
+  onConfirmPoint,
+  onCancelPoint,
   onAddBlock,
   onSelectBlock,
   onBlockUpdate,
@@ -100,6 +106,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <p className="text-[9px] text-[var(--text-secondary)] mt-2 italic">Adjust these values to match the size of bubbles on your sheet.</p>
           </div>
+
+          {/* Pending Point Confirmation */}
+          {pendingPoint && (
+            <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl space-y-3 animate-in fade-in slide-in-from-top-2">
+              <div className="flex items-center gap-2 text-yellow-500 font-bold text-[10px] uppercase tracking-wider">
+                <Crosshair size={12} /> Point Selected
+              </div>
+              <p className="text-[10px] text-yellow-500/80 leading-tight">
+                X: {pendingPoint[0]}, Y: {pendingPoint[1]}. Confirm this position for {calibrationStep.replace(/_/g, ' ')}?
+              </p>
+              <div className="flex gap-2">
+                <button 
+                  onClick={onConfirmPoint}
+                  className="flex-1 py-2 bg-yellow-500 text-black text-[10px] font-bold uppercase tracking-widest rounded hover:bg-yellow-400 transition-all"
+                >
+                  Confirm
+                </button>
+                <button 
+                  onClick={onCancelPoint}
+                  className="px-3 py-2 border border-yellow-500/30 text-yellow-500 text-[10px] font-bold uppercase tracking-widest rounded hover:bg-yellow-500/10 transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Blocks */}

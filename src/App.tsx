@@ -13,6 +13,7 @@ export default function App() {
   const [calibrationStep, setCalibrationStep] = useState<CalibrationStep>("IDLE");
   const [showPreview, setShowPreview] = useState(true);
   const [bubbleDimensions, setBubbleDimensions] = useState<[number, number]>([40, 40]);
+  const [pendingPoint, setPendingPoint] = useState<[number, number] | null>(null);
   const [notification, setNotification] = useState<{ message: string; type: 'info' | 'success' | 'error' } | null>(null);
 
   const showNotification = (message: string, type: 'info' | 'success' | 'error' = 'info') => {
@@ -55,13 +56,20 @@ export default function App() {
 
   const handleCanvasClick = (x: number, y: number) => {
     if (!activeBlockId || calibrationStep === "IDLE") return;
+    setPendingPoint([x, y]);
+    showNotification("Point selected. Click 'Confirm' to save or click elsewhere to reposition.");
+  };
 
+  const handleConfirmPoint = () => {
+    if (!activeBlockId || !pendingPoint) return;
+
+    const [x, y] = pendingPoint;
     const updatedBlocks = blocks.map(block => {
       if (block.id !== activeBlockId) return block;
 
       if (calibrationStep === "SELECT_ORIGIN") {
         setCalibrationStep("SELECT_BUBBLE_GAP");
-        showNotification(`Now click the bubble to set ${block.fieldType === 'QTYPE_INT' ? 'vertical' : 'horizontal'} bubble gap`);
+        showNotification(`Origin set. Now click the bubble to set ${block.fieldType === 'QTYPE_INT' ? 'vertical' : 'horizontal'} bubble gap`);
         return { ...block, origin: [x, y] as [number, number] };
       }
 
@@ -70,7 +78,7 @@ export default function App() {
           ? Math.abs(y - block.origin[1]) 
           : Math.abs(x - block.origin[0]);
         setCalibrationStep("SELECT_LABEL_GAP");
-        showNotification(`Now click the next label to set ${block.fieldType === 'QTYPE_INT' ? 'horizontal' : 'vertical'} label gap`);
+        showNotification(`Bubble gap set. Now click the next label to set ${block.fieldType === 'QTYPE_INT' ? 'horizontal' : 'vertical'} label gap`);
         return { ...block, bubblesGap: gap };
       }
 
@@ -87,6 +95,7 @@ export default function App() {
     });
 
     setBlocks(updatedBlocks);
+    setPendingPoint(null);
   };
 
   const handleExport = () => {
@@ -148,6 +157,7 @@ export default function App() {
             calibrationStep={calibrationStep}
             showPreview={showPreview}
             bubbleDimensions={bubbleDimensions}
+            pendingPoint={pendingPoint}
             onCanvasClick={handleCanvasClick}
             onBlockUpdate={(updated) => setBlocks(blocks.map(b => b.id === updated.id ? updated : b))}
           />
@@ -182,12 +192,16 @@ export default function App() {
         calibrationStep={calibrationStep}
         showPreview={showPreview}
         bubbleDimensions={bubbleDimensions}
+        pendingPoint={pendingPoint}
         onTogglePreview={() => setShowPreview(!showPreview)}
         onBubbleDimensionsChange={setBubbleDimensions}
+        onConfirmPoint={handleConfirmPoint}
+        onCancelPoint={() => setPendingPoint(null)}
         onAddBlock={handleAddBlock}
         onSelectBlock={(id) => {
           setActiveBlockId(id);
           setCalibrationStep("SELECT_ORIGIN");
+          setPendingPoint(null);
           showNotification("Recalibrating: Click the first bubble to set origin");
         }}
         onBlockUpdate={(updated) => setBlocks(blocks.map(b => b.id === updated.id ? updated : b))}

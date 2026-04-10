@@ -9,6 +9,7 @@ interface CanvasWorkbenchProps {
   calibrationStep: CalibrationStep;
   showPreview: boolean;
   bubbleDimensions: [number, number];
+  pendingPoint: [number, number] | null;
   onCanvasClick: (x: number, y: number) => void;
   onBlockUpdate: (block: FieldBlock) => void;
 }
@@ -20,6 +21,7 @@ export const CanvasWorkbench: React.FC<CanvasWorkbenchProps> = ({
   calibrationStep,
   showPreview,
   bubbleDimensions,
+  pendingPoint,
   onCanvasClick,
 }) => {
   const [scale, setScale] = useState(1);
@@ -164,6 +166,33 @@ export const CanvasWorkbench: React.FC<CanvasWorkbenchProps> = ({
               </Group>
             );
           })}
+
+          {/* Pending Point Indicator */}
+          {pendingPoint && (
+            <Group x={pendingPoint[0]} y={pendingPoint[1]}>
+              <Circle
+                radius={bubbleDimensions[0] / 2}
+                stroke="#facc15"
+                strokeWidth={3}
+                dash={[5, 5]}
+                fill="rgba(250, 204, 21, 0.1)"
+              />
+              <Rect
+                x={-10}
+                y={-1}
+                width={20}
+                height={2}
+                fill="#facc15"
+              />
+              <Rect
+                x={-1}
+                y={-10}
+                width={2}
+                height={20}
+                fill="#facc15"
+              />
+            </Group>
+          )}
         </Layer>
       </Stage>
 
