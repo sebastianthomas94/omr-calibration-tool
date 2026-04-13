@@ -68,24 +68,48 @@ export default function App() {
       if (block.id !== activeBlockId) return block;
 
       if (calibrationStep === "SELECT_ORIGIN") {
-        setCalibrationStep("SELECT_BUBBLE_GAP");
-        showNotification(`Origin set. Now click the bubble to set ${block.fieldType === 'QTYPE_INT' ? 'vertical' : 'horizontal'} bubble gap`);
+        setCalibrationStep("SELECT_LAST_BUBBLE");
+        const lastBubbleName = block.fieldType === 'QTYPE_MCQ4' ? 'last option (e.g. D)' : 'last digit (e.g. 9)';
+        showNotification(`Origin set. Now click the ${lastBubbleName} of the SAME group to set bubble gap`);
         return { ...block, origin: [x, y] as [number, number] };
       }
 
-      if (calibrationStep === "SELECT_BUBBLE_GAP") {
-        const gap = block.fieldType === 'QTYPE_INT' 
+      if (calibrationStep === "SELECT_LAST_BUBBLE") {
+        const bubblesPerLabel = block.fieldType === 'QTYPE_MCQ4' ? 4 : block.fieldType === 'QTYPE_INT' ? 10 : (block.bubbleValues?.length || 1);
+        const divisor = bubblesPerLabel - 1;
+        
+        if (divisor <= 0) {
+          setCalibrationStep("SELECT_LAST_LABEL");
+          return { ...block, bubblesGap: 0 };
+        }
+
+        const totalDist = block.fieldType === 'QTYPE_INT' 
           ? Math.abs(y - block.origin[1]) 
           : Math.abs(x - block.origin[0]);
-        setCalibrationStep("SELECT_LABEL_GAP");
-        showNotification(`Bubble gap set. Now click the next label to set ${block.fieldType === 'QTYPE_INT' ? 'horizontal' : 'vertical'} label gap`);
+        
+        const gap = totalDist / divisor;
+        
+        setCalibrationStep("SELECT_LAST_LABEL");
+        showNotification(`Bubble gap set. Now click the FIRST bubble of the LAST group to set label gap`);
         return { ...block, bubblesGap: gap };
       }
 
-      if (calibrationStep === "SELECT_LABEL_GAP") {
-        const gap = block.fieldType === 'QTYPE_INT'
+      if (calibrationStep === "SELECT_LAST_LABEL") {
+        const numLabels = block.fieldLabels.length;
+        const divisor = numLabels - 1;
+
+        if (divisor <= 0) {
+          setCalibrationStep("IDLE");
+          showNotification("Calibration complete!", "success");
+          return { ...block, labelsGap: 0 };
+        }
+
+        const totalDist = block.fieldType === 'QTYPE_INT'
           ? Math.abs(x - block.origin[0])
           : Math.abs(y - block.origin[1]);
+        
+        const gap = totalDist / divisor;
+
         setCalibrationStep("IDLE");
         showNotification("Calibration complete!", "success");
         return { ...block, labelsGap: gap };

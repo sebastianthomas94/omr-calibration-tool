@@ -30,6 +30,6 @@ export interface OMRConfig {
 export type CalibrationStep = 
   | "IDLE"
   | "SELECT_ORIGIN"
-  | "SELECT_BUBBLE_GAP"
-  | "SELECT_LABEL_GAP"
+  | "SELECT_LAST_BUBBLE"
+  | "SELECT_LAST_LABEL"
   | "COMPLETED";

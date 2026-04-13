@@ -291,15 +291,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </li>
             <li className="flex gap-2">
               <span className="text-[var(--accent)] font-bold">3.</span>
-              Click the first bubble to set the origin.
+              Click the first bubble (top-left) to set the origin.
             </li>
             <li className="flex gap-2">
               <span className="text-[var(--accent)] font-bold">4.</span>
-              Click the next bubble in the column to set vertical gap.
+              Click the LAST bubble in the SAME group (e.g., Option D or Digit 9).
             </li>
             <li className="flex gap-2">
               <span className="text-[var(--accent)] font-bold">5.</span>
-              Click the next bubble in the row to set horizontal gap.
+              Click the FIRST bubble of the LAST group (e.g., Question 20 or Column 10).
             </li>
           </ul>
         </section>
